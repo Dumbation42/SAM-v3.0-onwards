@@ -1,6 +1,7 @@
 Overview
 
 This README details the functionality and setup instructions for a Discord bot designed to enhance user interaction through GPT-3 powered conversations and AI-driven image generation. The bot is built to seamlessly integrate with Discord servers, offering features like contextual conversations, dynamic presence updates, image generation with NSFW content filtering, and a customizable personality.
+
 Features
 
     Dynamic Presence Updates: The bot updates its presence status on Discord at regular intervals, showcasing its availability or current action.
@@ -11,7 +12,7 @@ Features
 
 Requirements
 
-Before setting up the bot, ensure you have Python 3.7 or newer installed on your system. The bot also requires several third-party libraries, including aiosqlite, discord.py, aiohttp, and a custom library freeGPT for asynchronous communication with GPT-3 and other AI models.
+Before setting up the bot, ensure you have Python 3.7 or newer installed on your system. The bot also requires several third-party libraries, including aiosqlite, discord.py, aiohttp, and freeGPT for asynchronous communication with GPT-3.
 Setup Instructions
 
     Install Dependencies: First, install all required Python libraries by running pip install -r requirements.txt in your terminal. This will ensure all dependencies are correctly installed.
