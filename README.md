@@ -28,7 +28,7 @@ Setup Instructions
 
 Usage
 
-    Setting Personality: Use the command !SetPersonality [Personality] to change the bot's conversation style. This action resets the server memory and applies the new personality.
+    Setting Personality: Ping the bot with the message SetPersonality [Personality] to change the bot's conversation style. This action resets the server memory and applies the new personality.
     Engaging in Conversations: Mention the bot followed by your message in a Discord server. The bot will respond based on its set personality and the context of the conversation.
     Image Generation: Request the bot to generate an image by sending a message containing GenerateImage [Image Prompt]. The bot will assess the prompt for NSFW content and proceed to generate an image if it's deemed safe.
 
