@@ -35,3 +35,5 @@ Usage
 Note
 
 This bot script is designed for educational and entertainment purposes. Please ensure proper usage and adherence to Discord's guidelines and terms of service when deploying and interacting with the bot.
+
+README file generated using ChatGPT-4
