@@ -39,16 +39,15 @@ async def on_ready():
         )
     print("\033[1;94m INFO \033[0m| Database connection successful.")
     sync_commands = await bot.tree.sync()
-    print(f"\033[1;94m INFO \033[0m| Synced {len(sync_commands)} command(s).")
     while True:
         await bot.change_presence(
             status=Status.online,
             activity=Activity(
                 type=ActivityType.playing,
-                name="SAM v3.0",
+                name = f"{botpersonality} | SAM v3.01",
             ),
         )
-        await sleep(300)
+        await sleep(1)
 
 @bot.event
 async def on_message(message):
@@ -85,10 +84,7 @@ async def on_message(message):
                     print(f"An error occurred generating image: {e}")
         else:
             await message.channel.send("I just don't feel up to the task right now.")
-    elif "ContextRefresh" in message.content:
-        server_memory = {}
-        await message.channel.send("Server Context Cleared")
-        
+
     elif "SetPersonality" in message.content:
         parts = message.content.split("SetPersonality", 1)
         if len(parts) > 1:
@@ -96,6 +92,12 @@ async def on_message(message):
             botpersonality = parts[1].strip()
             server_memory = {}
             await message.channel.send(f"Personality Set To: {botpersonality}")
+
+    elif "ContextRefresh" in message.content:
+        contextclearmessage = await AsyncClient.create_completion("gpt3", f"State 'Server Context Cleared' in the style of {botpersonality}")
+        server_memory = {}
+        await message.channel.send(contextclearmessage)
+
     else:
         prompt = message.content.strip()
         server_id = message.guild.id
