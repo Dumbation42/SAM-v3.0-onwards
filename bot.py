@@ -1,3 +1,4 @@
+import asyncio
 import signal
 from os import remove
 from json import load
@@ -118,13 +119,17 @@ async def on_message(message):
 
     await bot.process_commands(message)
 
-def graceful_exit(signum, frame):
-    print("Shutting down program")
-    run(db.close())
-    run(bot.close())
-    exit(0)
 
-signal.signal(signal.SIGTERM, graceful_exit)
+def graceful_exit():
+    print("Shutting down gracefully...")
+    loop = asyncio.get_running_loop()
+    db_close_task = loop.create_task(db.close())
+    bot_close_task = loop.create_task(bot.close())
+    loop.run_until_complete(db_close_task)
+    loop.run_until_complete(bot_close_task)
+    loop.stop()
+
+signal.signal(signal.SIGTERM, lambda s, f: loop.call_soon_threadsafe(graceful_exit))
 
 if __name__ == "__main__":
     with open("config.json", "r") as file:
