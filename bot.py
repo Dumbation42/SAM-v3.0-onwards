@@ -1,3 +1,4 @@
+import signal
 from os import remove
 from json import load
 from io import BytesIO
@@ -44,7 +45,7 @@ async def on_ready():
             status=Status.online,
             activity=Activity(
                 type=ActivityType.playing,
-                name = f"{botpersonality} | SAM v3.01",
+                name=f"the role of {botpersonality} | SAM v3.1",
             ),
         )
         await sleep(1)
@@ -62,9 +63,9 @@ async def on_message(message):
     if not bot.user.mentioned_in(message):
         return
 
-    if "GenerateImage" in message.content:
+    if "c.image" in message.content:
         server_id = message.guild.id
-        image_prompt = message.content.replace("GenerateImage", "").strip()
+        image_prompt = message.content.replace("c.image", "").strip()
         question_to_gpt3 = f"This is an automated prompt used for an ai moderated blacklist for an image generator, please only respond with yes or no: Is the following prompt likely to generate content that is considered NSFW (Pornographic Content or Nudity)? | Prompt: '{image_prompt}'"
 
         try:
@@ -85,24 +86,27 @@ async def on_message(message):
         else:
             await message.channel.send("I just don't feel up to the task right now.")
 
-    elif "SetPersonality" in message.content:
-        parts = message.content.split("SetPersonality", 1)
+    elif "c.style" in message.content:
+        parts = message.content.split("c.style", 1)
         if len(parts) > 1:
             global botpersonality
             botpersonality = parts[1].strip()
-            server_memory = {}
+            server_last_response = "None"
             await message.channel.send(f"Personality Set To: {botpersonality}")
+    
+    elif "c.help" in message.content:
+        await message.channel.send("c.help: sends this message | c.refresh: refreshes server context | c.image: generates image via prodia | c.style: sets bot response style | You can also just ping me and receive a response from GPT-3")
 
-    elif "ContextRefresh" in message.content:
-        contextclearmessage = await AsyncClient.create_completion("gpt3", f"State 'Server Context Cleared' in the style of {botpersonality}")
-        server_memory = {}
+    elif "c.refresh" in message.content:
+        contextclearmessage = await AsyncClient.create_response("gpt3", f"State 'Server Context Cleared' in the style of {botpersonality}")
+        server_last_response = "None"
         await message.channel.send(contextclearmessage)
 
     else:
         prompt = message.content.strip()
         server_id = message.guild.id
         server_last_response = server_memory.get(server_id, "")
-        full_prompt = f"GPT-3 Last Response: {server_last_response} | Current Prompt (Ignore '@Bot User ID Here') (Respond in the style of {botpersonality}): {prompt}".strip()
+        full_prompt = f"GPT-3 Last Response: {server_last_response} |  (Ignore '@Bot User ID Here') (Respond in the style of {botpersonality}) | Current Prompt: {prompt}".strip()
 
         async with message.channel.typing():
             try:
@@ -113,6 +117,14 @@ async def on_message(message):
                 print(f"An error occurred: {e}")
 
     await bot.process_commands(message)
+
+def graceful_exit(signum, frame):
+    print("Shutting down program")
+    run(db.close())
+    run(bot.close())
+    exit(0)
+
+signal.signal(signal.SIGTERM, graceful_exit)
 
 if __name__ == "__main__":
     with open("config.json", "r") as file:
