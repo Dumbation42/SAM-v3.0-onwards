@@ -92,16 +92,15 @@ async def on_message(message):
         if len(parts) > 1:
             global botpersonality
             botpersonality = parts[1].strip()
-            server_last_response = "None"
+            server_memory = {}
             await message.channel.send(f"Personality Set To: {botpersonality}")
     
     elif "c.help" in message.content:
         await message.channel.send("c.help: sends this message | c.refresh: refreshes server context | c.image: generates image via prodia | c.style: sets bot response style | You can also just ping me and receive a response from GPT-3")
 
     elif "c.refresh" in message.content:
-        contextclearmessage = await AsyncClient.create_response("gpt3", f"State 'Server Context Cleared' in the style of {botpersonality}")
-        server_last_response = "None"
-        await message.channel.send(contextclearmessage)
+        server_memory = {}
+        await message.channel.send("Context Cache Reset")
 
     else:
         prompt = message.content.strip()
